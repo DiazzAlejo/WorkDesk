@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import shutil
+import sys
 import tempfile
 from pathlib import Path
 from threading import RLock
@@ -13,6 +14,14 @@ class PersistenceError(ValueError):
     """Raised when local DeskOS data cannot be read or written safely."""
 
 
+def default_data_path() -> Path:
+    if getattr(sys, "frozen", False):
+        local_app_data = os.environ.get("LOCALAPPDATA")
+        base_path = Path(local_app_data) if local_app_data else Path.home() / "AppData" / "Local"
+        return base_path / "WorkDesk" / "deskos.json"
+    return Path("data") / "deskos.json"
+
+
 class JsonRepository:
     """Versioned local storage shared by application services."""
 
@@ -21,7 +30,7 @@ class JsonRepository:
     COLLECTIONS = ("todos", "notes", "pomodoro_sessions", "work_items", "comments", "documents")
 
     def __init__(self, path: Optional[Path] = None) -> None:
-        self.path = Path(path) if path else Path("data") / "deskos.json"
+        self.path = Path(path) if path else default_data_path()
         self._lock = RLock()
         self._data: Dict[str, Any] = self._empty_data()
         self.load()

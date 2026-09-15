@@ -48,3 +48,16 @@ python -m unittest discover -s tests -v
 The application stores local data in `data/deskos.json`, which is ignored by Git. Before each replacement, the repository rotates up to three backups: `.bak`, `.bak.1`, and `.bak.2`. The current implementation uses only the Python standard library and Tkinter.
 
 UI workflow tests use the shared Tkinter harness in `tests/ui_harness.py`; it creates a withdrawn root, pumps events, and destroys the root after each test.
+
+## Windows Desktop Release
+
+Download the latest Windows ZIP from the GitHub Releases page, extract it, and double-click `WorkDesk.exe`. No Python installation is required. The packaged app stores its local data in `%LOCALAPPDATA%\WorkDesk`.
+
+To build the release artifact on Windows:
+
+```powershell
+python -m pip install pyinstaller
+.\build_windows.ps1
+```
+
+The script creates `dist\WorkDesk-windows-x64.zip`.
